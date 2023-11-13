@@ -1,0 +1,45 @@
+﻿<Window x:Class="MusicPlayerWPF.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MusicPlayerWPF"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800" Loaded="Window_Loaded">
+    <Grid Width="800" Height="434">
+        <TextBlock x:Name="textPath" Margin="103,91,0,0" TextWrapping="Wrap" Text="Путь..." VerticalAlignment="Top" Height="29" FontFamily="Bahnschrift Condensed" FontSize="20" HorizontalAlignment="Left" 
+                   Width="225" MinWidth="650" MaxWidth="650" MinHeight="25" MaxHeight="25" ClipToBounds="True" />
+
+        <Button Name="buttonFolder" Content="Выбрать папку" Margin="660,20,0,0" FontFamily="Bahnschrift Condensed" FontSize="20" HorizontalContentAlignment="Center" 
+                Click="buttonFolder_Click" Height="25" VerticalAlignment="Top" HorizontalAlignment="Left" Width="120"/>
+
+        <MediaElement LoadedBehavior="Manual" x:Name="media" Margin="5,419,785,5" Width="10" Height="10" MediaOpened="media_MediaOpened_1"/>
+
+        <Grid x:Name="footter" Margin="0,296,0,0" VerticalAlignment="Top" HorizontalAlignment="Center" Width="800" Height="123">
+            <Button x:Name="buttonLeft" Content="|◁" RenderTransformOrigin="0.509,0.496" FontSize="20" 
+                HorizontalContentAlignment="Center" FontFamily="Bahnschrift Condensed" VerticalContentAlignment="Center" FontWeight="Bold" Margin="330,0,0,0" Width="65" Height="35"
+                    VerticalAlignment="Center" HorizontalAlignment="Left"/>
+
+            <Button x:Name="buttonPlayPause" Content="▷" Click="buttonPlayPause_Click" FontSize="20" 
+                VerticalContentAlignment="Center" FontFamily="Bahnschrift Condensed" Width="65" Height="35"
+                    VerticalAlignment="Center" HorizontalAlignment="Left" Margin="400,0,0,0"/>
+
+            <Button x:Name="buttonRight" Content="▷|" FontSize="20" FontFamily="Bahnschrift Condensed" 
+                RenderTransformOrigin="0,0" Click="buttonRight_Click" Margin="470,0,0,0" Width="64" Height="35" 
+                    VerticalAlignment="Center" HorizontalAlignment="Left"/>
+            
+            <Slider x:Name="progres" Margin="250,93,0,0" Minimum="0" Maximum="10" Value="0" IsSnapToTickEnabled="False" ValueChanged="progres_ValueChanged" MouseUp="progres_MouseUp" 
+                IsMoveToPointEnabled="True"  Width="300" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top" Background="White"/>
+
+            <Button Content="🔀" HorizontalAlignment="Left" Margin="260,0,0,0" VerticalAlignment="Center" Width="65" Height="35" FontFamily="Bahnschrift Condensed"  FontSize="20"/>
+
+            <Slider x:Name="mediaVolume" HorizontalAlignment="Left" Margin="622,0,0,0" VerticalAlignment="Center" Width="155" Orientation="Horizontal" Height="22" Minimum="0" Maximum="1" Value="1" 
+                    ValueChanged="mediaVolume_ValueChanged_1" IsMoveToPointEnabled="True"/>
+
+            <Button Width="32" Height="32" HorizontalAlignment="Left" Margin="565,44,0,0" VerticalAlignment="Top" Click="bt_VolumeImage_Click">
+                <Image x:Name="btImageVolume" Source="/Images/VolumeMax.Png"></Image>
+            </Button>
+        </Grid>
+
+    </Grid>
+</Window>
