@@ -6,30 +6,38 @@
         xmlns:local="clr-namespace:MusicPlayerWPF"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800" Loaded="Window_Loaded">
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Symbols.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
     <Grid Width="800" Height="434">
         <TextBlock x:Name="textPath" Margin="103,91,0,0" TextWrapping="Wrap" Text="Путь..." VerticalAlignment="Top" Height="29" FontFamily="Bahnschrift Condensed" FontSize="20" HorizontalAlignment="Left" 
                    Width="225" MinWidth="650" MaxWidth="650" MinHeight="25" MaxHeight="25" ClipToBounds="True" />
 
         <Button Name="buttonFolder" Content="Выбрать папку" Margin="660,20,0,0" FontFamily="Bahnschrift Condensed" FontSize="20" HorizontalContentAlignment="Center" 
-                Click="buttonFolder_Click" Height="25" VerticalAlignment="Top" HorizontalAlignment="Left" Width="120"/>
+                Click="buttonFolder_Click" Height="25" VerticalAlignment="Top" HorizontalAlignment="Left" Width="120" Background="White" />
 
-        <MediaElement LoadedBehavior="Manual" x:Name="media" Margin="5,419,785,5" Width="10" Height="10" MediaOpened="media_MediaOpened_1"/>
+        <MediaElement LoadedBehavior="Manual" x:Name="media" Margin="5,419,785,5" Width="10" Height="10" MediaOpened="media_MediaOpened"/>
 
         <Grid x:Name="footter" Margin="0,296,0,0" VerticalAlignment="Top" HorizontalAlignment="Center" Width="800" Height="123">
             <Button x:Name="buttonLeft" Content="|◁" RenderTransformOrigin="0.509,0.496" FontSize="20" 
                 HorizontalContentAlignment="Center" FontFamily="Bahnschrift Condensed" VerticalContentAlignment="Center" FontWeight="Bold" Margin="330,0,0,0" Width="65" Height="35"
                     VerticalAlignment="Center" HorizontalAlignment="Left" Click="buttonLeft_Click"/>
 
-            <Button x:Name="buttonPlayPause" Content="▷" Click="buttonPlayPause_Click" FontSize="20" 
+            <Button x:Name="buttonPlayPause" Content="{StaticResource Play}" Click="buttonPlayPause_Click" FontSize="24" 
                 VerticalContentAlignment="Center" FontFamily="Bahnschrift Condensed" Width="65" Height="35"
                     VerticalAlignment="Center" HorizontalAlignment="Left" Margin="400,0,0,0"/>
 
             <Button x:Name="buttonRight" Content="▷|" FontSize="20" FontFamily="Bahnschrift Condensed" 
                 RenderTransformOrigin="0,0" Click="buttonRight_Click" Margin="470,0,0,0" Width="64" Height="35" 
-                    VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                    VerticalAlignment="Center" HorizontalAlignment="Left" />
 
-            <Slider x:Name="progres" Margin="275,93,0,0" Minimum="0" Maximum="10" Value="0" IsSnapToTickEnabled="False" ValueChanged="progres_ValueChanged" MouseUp="progres_MouseUp" 
-                IsMoveToPointEnabled="True" Width="250" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top" Background="White" TickFrequency="100" TickPlacement="BottomRight"/>
+            <Slider x:Name="progres" Margin="275,93,0,0" Minimum="0" Maximum="10" Value="0" Width="250"
+                    HorizontalAlignment="Left" Height="20" VerticalAlignment="Top" IsMoveToPointEnabled="True" Thumb.DragCompleted="progres_DragCompleted" ValueChanged="progres_ValueChanged"/>
 
             <Button Content="🔀" HorizontalAlignment="Left" Margin="260,0,0,0" VerticalAlignment="Center" Width="65" Height="35" FontFamily="Bahnschrift Condensed"  FontSize="20"/>
 
@@ -42,6 +50,9 @@
             <Label x:Name="labelArtist" HorizontalAlignment="Left" Margin="10,68,0,0" VerticalAlignment="Top" Height="35" Width="196"/>
             <Label x:Name="labelTitle" HorizontalAlignment="Left" Margin="10,25,0,0" VerticalAlignment="Top" Height="35" Width="196"/>
         </Grid>
-
+        <Button  HorizontalAlignment="Left" Margin="378,0,0,0" VerticalAlignment="Center" Width="100" Height="30" Content="a" Click="Button_Click">
+            
+        </Button>
     </Grid>
+
 </Window>

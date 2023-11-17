@@ -10,46 +10,23 @@ using System.Timers;
 using NAudio.Wave;
 using TagLib;
 using System.Runtime.CompilerServices;
+using MusicPlayerWPF;
+using System.Windows.Controls.Primitives;
+using System.Diagnostics;
+using System.Windows.Markup;
 
 namespace MusicPlayerWPF
 {
     public partial class MainWindow : Window
     {
-        struct States
-        {
-            public enum StatesOfPlayer
-            {
-                Manual,
-                Play,
-                Close,
-                Pause,
-                Stop
-            }
-
-            public static void SetState(ref StatesOfPlayer s, ref MediaElement el, ref System.Timers.Timer t)
-            {
-                MainWindow window = new MainWindow();
-                switch (s)
-                {
-                    case StatesOfPlayer.Play:
-                        el.Play();
-                        t.Start();
-                        
-                        break;
-                    case StatesOfPlayer.Close: el.Close(); break;
-                    case StatesOfPlayer.Pause: el.Pause(); break;
-                    case StatesOfPlayer.Stop:
-                        el.Stop();
-                        t.Stop();
-                        break;
-                }
-            }
-        }
+        
 
         private States.StatesOfPlayer state;
         private System.Timers.Timer timer;
         private string[] musics;
         private int count;
+        Song song;
+        internal static ResourceDictionary resDictionary = (ResourceDictionary)XamlReader.Parse(System.IO.File.ReadAllText("Symbols.xaml"));
 
         public MainWindow()
         {
@@ -82,38 +59,23 @@ namespace MusicPlayerWPF
 
         private void buttonPlayPause_Click(object sender, RoutedEventArgs e)
         {
+            if (media.Source == null)
+                return;
             if (state == States.StatesOfPlayer.Play)
             {
                 state = States.StatesOfPlayer.Pause;
-                States.SetState(ref state, ref media, ref timer);
+                States.SetState(ref state, ref media, ref timer, ref buttonPlayPause);
             }
             else
             {
                 state = States.StatesOfPlayer.Play;
-                States.SetState(ref state, ref media, ref timer);
+                States.SetState(ref state, ref media, ref timer, ref buttonPlayPause);
             }
-
-            SetTitleAndArtist();
         }
 
         private void SetTitleAndArtist()
         {
-            string filePath = musics[count];
-            using (var audioFile = new AudioFileReader(filePath))
-            {
-                var tagFile = TagLib.File.Create(filePath);
-                string artist = tagFile.Tag.FirstPerformer;
-                string title = tagFile.Tag.Title;
-
-                if (!string.IsNullOrEmpty(title) & !string.IsNullOrEmpty(artist))
-                {
-                    labelTitle.Content = new StringBuilder($"{artist} -- {title}");
-                }
-                else
-                {
-                    labelTitle.Content = System.IO.Path.GetFileName(title);
-                }
-            }
+            
         }
 
         private void Timer_Elapsed(object sender, ElapsedEventArgs e)
@@ -153,6 +115,7 @@ namespace MusicPlayerWPF
         void OpenMedia(object sender)
         {
             System.Windows.Controls.Button bt = sender as System.Windows.Controls.Button;
+            
             if (bt.Name == buttonRight.Name)
             {
                 if (!(count + 1 >= musics.Length))
@@ -166,10 +129,12 @@ namespace MusicPlayerWPF
         }
             
 
-        private void media_MediaOpened_1(object sender, RoutedEventArgs e)
+        private void media_MediaOpened(object sender, RoutedEventArgs e)
         {
+            song = new Song((sender as MediaElement).Source.LocalPath);
             progres.Value = progres.Minimum;
             progres.Maximum = Convert.ToDouble(media.NaturalDuration.TimeSpan.TotalMilliseconds);
+            labelTitle.Content = song.GetTitleAndArtist();
         }
 
         private void mediaVolume_ValueChanged_1(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -181,64 +146,47 @@ namespace MusicPlayerWPF
                 ChangeVolumeImage(media.Volume);
             }
         }
-        //проверка громкости и вызов метода ChoiseImage, с передачей ему в параметры громкости
+        //проверка громкости и установка соответствующей картинки
         private void ChangeVolumeImage(double volume)
         {
+            Image img = btImageVolume;
+
             if (volume == 0.0)
             {
-                ChoiseImage("VolumeMin");
+                img.Source = (BitmapImage)resDictionary["VolumeMin"];
             }
             else if (volume > 0 & volume <= 0.33)
             {
-                ChoiseImage("VolumeOne");
+                img.Source = (BitmapImage)resDictionary["VolumeOne"];
             }
             else if(volume >0.33 & volume <= 0.66)
             {
-                ChoiseImage("VolumeTwo");
+                img.Source = (BitmapImage)resDictionary["VolumeTwo"];
             }
             else
             {
-                ChoiseImage("VolumeMax");
+                img.Source = (BitmapImage)resDictionary["VolumeMax"];
             }
-        }
-        //установка картинки громкости
-        private void ChoiseImage(string filename)
-        {
-            Image img = btImageVolume;
-            
-            string imagePath = $@"/Images/{filename}.png";
-            BitmapImage bitmapImage = new BitmapImage(new Uri(imagePath, UriKind.Relative));
-            img.Source = bitmapImage;
         }
 
         private void Media_MediaEnded(object sender, RoutedEventArgs e)
         {
             state = States.StatesOfPlayer.Stop;
-            States.SetState(ref state, ref media, ref timer);
+            States.SetState(ref state, ref media, ref timer, ref buttonPlayPause);
         }
 
-        private void progres_ValueChanged(object sender, MouseButtonEventArgs e)
+        private void progres_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             textPath.Text = progres.Value.ToString();
-
-            if (progres.IsMouseCaptureWithin)
+            if (Mouse.LeftButton == MouseButtonState.Pressed)
             {
-                media.Position = TimeSpan.FromMilliseconds(progres.Value);
+                Track track = progres.Template.FindName("PART_Track", progres) as Track;
+                if (track.IsMouseOver)
+                {
+                    //System.Windows.Forms.MessageBox.Show(progres.IsMouseCaptured.ToString());
+                    media.Position = TimeSpan.FromMilliseconds(progres.Value);
+                }
             }
-        }
-        
-        private void progres_MouseUp(object sender, MouseButtonEventArgs e)
-        {
-            //Dispatcher.Invoke(() =>
-            //{
-            //    Point clickPosition = e.GetPosition(progres);
-            //    double newValue = (clickPosition.X / progres.ActualWidth) * (progres.Maximum - progres.Minimum) + progres.Minimum;
-            //    progres.SetValue(Slider.ValueProperty, newValue);
-            //    media.Position = TimeSpan.FromMilliseconds(newValue);
-            //});
-
-            //C# ЭТО ИЗИ НАХУЙ СУКА БЛЯТЬ БИМБИМ БАМБАМ
-            media.Position = TimeSpan.FromMilliseconds(progres.Value);
         }
 
         private void bt_VolumeImage_Click(object sender, RoutedEventArgs e)
@@ -249,21 +197,62 @@ namespace MusicPlayerWPF
 
             if (media.Volume != 0)
             {
-                string imagePath = @"/Images/VolumeMin.png";
-
-                BitmapImage bitmapImage = new BitmapImage(new Uri(imagePath, UriKind.Relative));
-                img.Source = bitmapImage;
+                img.Source = (BitmapImage)resDictionary["VolumeMin"];
                 media.Volume = 0;
             }
             else
             {
-                string imagePath = @"/Images/VolumeMax.png";
-
-                BitmapImage bitmapImage = new BitmapImage(new Uri(imagePath, UriKind.Relative));
-                img.Source = bitmapImage;
+                img.Source = (BitmapImage)resDictionary["VolumeMax"];
                 media.Volume = mediaVolume.Value;
             }
         }
+
+        private void progres_DragCompleted(object sender, DragCompletedEventArgs e)
+        {
+            media.Position = TimeSpan.FromMilliseconds(progres.Value);
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e) => this.Close();
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+        }
     }
-    
+}
+
+struct States
+{
+    public enum StatesOfPlayer
+    {
+        Manual,
+        Play,
+        Close,
+        Pause,
+        Stop
+    }
+
+    public static void SetState(ref StatesOfPlayer s, ref MediaElement el, ref System.Timers.Timer t, ref System.Windows.Controls.Button PlayPause)
+    {
+        
+        //MainWindow window = new MainWindow();
+        switch (s)
+        {
+            case StatesOfPlayer.Play:
+                el.Play();
+                t.Start();
+                PlayPause.Content = (string)MainWindow.resDictionary["Pause"];
+                break;
+            case StatesOfPlayer.Close: el.Close(); break;
+            case StatesOfPlayer.Pause: 
+                el.Pause();
+                t.Stop();
+                PlayPause.Content = (string)MainWindow.resDictionary["Play"];
+                break;
+            case StatesOfPlayer.Stop:
+                el.Stop();
+                t.Stop();
+                PlayPause.Content = (string)MainWindow.resDictionary["Play"];
+                break;
+        }
+    }
 }
