@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MusicPlayerWPF"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800" Loaded="Window_Loaded">
+        Title="MainWindow" MinWidth="600" MinHeight="400" Width="800" Height="400" Loaded="Window_Loaded">
 
     <Window.Resources>
         <ResourceDictionary>
@@ -14,45 +14,98 @@
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Window.Resources>
-    <Grid Width="800" Height="434">
-        <TextBlock x:Name="textPath" Margin="103,91,0,0" TextWrapping="Wrap" Text="Путь..." VerticalAlignment="Top" Height="29" FontFamily="Bahnschrift Condensed" FontSize="20" HorizontalAlignment="Left" 
+
+
+    <Grid MinWidth="400" MinHeight="200">
+        <TextBlock x:Name="textPath" Margin="10,20,0,0" TextWrapping="Wrap" Text="Путь..." VerticalAlignment="Top" Height="29" FontFamily="Bahnschrift Condensed" FontSize="20" HorizontalAlignment="Left" 
                    Width="225" MinWidth="650" MaxWidth="650" MinHeight="25" MaxHeight="25" ClipToBounds="True" />
 
-        <Button Name="buttonFolder" Content="Выбрать папку" Margin="660,20,0,0" FontFamily="Bahnschrift Condensed" FontSize="20" HorizontalContentAlignment="Center" 
-                Click="buttonFolder_Click" Height="25" VerticalAlignment="Top" HorizontalAlignment="Left" Width="120" Background="White" />
+        <Button Name="buttonFolder" 
+                Content="Выбрать папку" 
+                Margin="607,20,0,0" 
+                FontSize="25" 
+                HorizontalContentAlignment="Center" 
+                Click="ButtonFolder_Click" 
+                Height="Auto" Width="Auto" 
+                MinHeight="50" MinWidth="200"
+                VerticalAlignment="Top" HorizontalAlignment="Center"
+                Background="White" />
 
-        <MediaElement LoadedBehavior="Manual" x:Name="media" Margin="5,419,785,5" Width="10" Height="10" MediaOpened="media_MediaOpened"/>
+        <MediaElement LoadedBehavior="Manual" x:Name="media" Margin="5,419,785,5" Width="10" Height="10" MediaOpened="Media_MediaOpened"/>
 
-        <Grid x:Name="footter" Margin="0,296,0,0" VerticalAlignment="Top" HorizontalAlignment="Center" Width="800" Height="123">
-            <Button x:Name="buttonLeft" Content="|◁" RenderTransformOrigin="0.509,0.496" FontSize="20" 
-                HorizontalContentAlignment="Center" FontFamily="Bahnschrift Condensed" VerticalContentAlignment="Center" FontWeight="Bold" Margin="330,0,0,0" Width="65" Height="35"
-                    VerticalAlignment="Center" HorizontalAlignment="Left" Click="buttonLeft_Click"/>
+        <Grid x:Name="footter" Margin="0,296,0,0" VerticalAlignment="Bottom" Width="Auto" Height="Auto" Background="LightBlue">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="43*"/>
+                <RowDefinition Height="17*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="100*"/>
+                <ColumnDefinition Width="200*"/>
+                <ColumnDefinition Width="100*"/>
+            </Grid.ColumnDefinitions>
 
-            <Button x:Name="buttonPlayPause" Content="{StaticResource Play}" Click="buttonPlayPause_Click" FontSize="24" 
-                VerticalContentAlignment="Center" FontFamily="Bahnschrift Condensed" Width="65" Height="35"
-                    VerticalAlignment="Center" HorizontalAlignment="Left" Margin="400,0,0,0"/>
 
-            <Button x:Name="buttonRight" Content="▷|" FontSize="20" FontFamily="Bahnschrift Condensed" 
-                RenderTransformOrigin="0,0" Click="buttonRight_Click" Margin="470,0,0,0" Width="64" Height="35" 
-                    VerticalAlignment="Center" HorizontalAlignment="Left" />
+            <Label x:Name="labelTitle" FontSize="15"
+                   Margin="10,8,30,7"
+                   MinHeight="20" MinWidth="100"
+                   Height="Auto" Width="Auto"/>
 
-            <Slider x:Name="progres" Margin="275,93,0,0" Minimum="0" Maximum="10" Value="0" Width="250"
-                    HorizontalAlignment="Left" Height="20" VerticalAlignment="Top" IsMoveToPointEnabled="True" Thumb.DragCompleted="progres_DragCompleted" ValueChanged="progres_ValueChanged"/>
+            <Slider x:Name="mediaVolume"
+                    VerticalAlignment="Top"  
+                    MinWidth="50" MinHeight="18"
+                    Height="18" Width="Auto"
+                    Margin="30,21,20,0"
+                    Minimum="0" Maximum="1" Value="1" 
+                    ValueChanged="MediaVolume_ValueChanged_1" 
+                    IsMoveToPointEnabled="True" Grid.Column="2" Grid.RowSpan="2"/>
+            <Button x:Name="btImageVolume"
+                    Click="Bt_VolumeImage_Click" 
+                    Width="27" Height="26" 
+                    FontSize="20" 
+                    VerticalAlignment="Top" HorizontalAlignment="Left"
+                    HorizontalContentAlignment="Center"
+                    Content="{StaticResource VolumeMax}" Grid.Column="2" Margin="0,17,0,0" Grid.RowSpan="2"/>
+            <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <Button x:Name="buttonLeft" 
+                    Content="{StaticResource Left}"
+                    Click="ButtonLeft_Click" 
+                    Width="Auto" Height="Auto"
+                    FontSize="20" MinWidth="27" MinHeight="27"
+                    Margin="5"
+                    />
+                <Button x:Name="buttonPlayPause" 
+                    Content="{StaticResource Play}" 
+                    Click="ButtonPlayPause_Click" 
+                    FontSize="20" Width="Auto" Height="Auto"
+                    Margin="5"
+                    />
+                <Button x:Name="buttonRight" 
+                    Content="{StaticResource Right}" 
+                    FontSize="20" Width="Auto" Height="Auto"
+                    Click="ButtonRight_Click"
+                    Margin="5"
+                    />
+                <Button x:Name="buttonRand" 
+                    Content="{StaticResource Rand}" 
+                    Width="Auto" Height="Auto"
+                    FontSize="20" MinWidth="27" MinHeight="27" 
+                    Margin="5"
+                    />
+                <Button Content="{StaticResource Res}" 
+                    FontSize="20" Width="Auto" Height="Auto" 
+                    Margin="5"/>
+            </StackPanel>
+            <Slider x:Name="progres" Margin="50,0,50,0"
+                    Minimum="0" Maximum="10" Value="0" 
+                    MinWidth="250" MinHeight="20"
+                    Width="Auto" Height="20"
+                    IsMoveToPointEnabled="True" 
+                    VerticalAlignment="Center"
+                    Thumb.DragCompleted="Progres_DragCompleted" Thumb.DragStarted="progres_DragStarted"
+                    ValueChanged="Progres_ValueChanged"
+                    Style="{DynamicResource SliderStyle1}" Grid.Column="1" Grid.Row="1"/>
 
-            <Button Content="🔀" HorizontalAlignment="Left" Margin="260,0,0,0" VerticalAlignment="Center" Width="65" Height="35" FontFamily="Bahnschrift Condensed"  FontSize="20"/>
-
-            <Slider x:Name="mediaVolume" HorizontalAlignment="Left" Margin="622,0,0,0" VerticalAlignment="Center" Width="155" Orientation="Horizontal" Height="22" Minimum="0" Maximum="1" Value="1" 
-                    ValueChanged="mediaVolume_ValueChanged_1" IsMoveToPointEnabled="True"/>
-
-            <Button Width="32" Height="32" HorizontalAlignment="Left" Margin="565,44,0,0" VerticalAlignment="Top" Click="bt_VolumeImage_Click">
-                <Image x:Name="btImageVolume" Source="/Images/VolumeMax.Png"></Image>
-            </Button>
-            <Label x:Name="labelArtist" HorizontalAlignment="Left" Margin="10,68,0,0" VerticalAlignment="Top" Height="35" Width="196"/>
-            <Label x:Name="labelTitle" HorizontalAlignment="Left" Margin="10,25,0,0" VerticalAlignment="Top" Height="35" Width="196"/>
         </Grid>
-        <Button  HorizontalAlignment="Left" Margin="378,0,0,0" VerticalAlignment="Center" Width="100" Height="30" Content="a" Click="Button_Click">
-            
-        </Button>
     </Grid>
 
 </Window>

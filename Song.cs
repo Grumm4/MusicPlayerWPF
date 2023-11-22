@@ -19,12 +19,7 @@ namespace MusicPlayerWPF
         private readonly string title;
 
         private readonly string path;
-        //public string Path
-        //{
-        //    get { return path; }
-        //    set { path = value; }
-        //}
-        
+
         public Song(string path)
         {
             try
