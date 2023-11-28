@@ -15,6 +15,10 @@ using System.Windows.Controls.Primitives;
 using System.Diagnostics;
 using System.Windows.Markup;
 using System.Windows.Media;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Threading;
+using System.Linq;
 
 namespace MusicPlayerWPF
 {
@@ -22,11 +26,14 @@ namespace MusicPlayerWPF
     {
         private States.StatesOfPlayer state;
         private System.Timers.Timer timer;
-        private string[] musics; // массив путей до файлов
-        private int[] musicsPositions;
+        private string[] music; // массив путей до файлов
         private int count; //счётчик, какая по счёту открыта песня
         private Song song;
         internal static ResourceDictionary resDictionary = (ResourceDictionary)XamlReader.Parse(System.IO.File.ReadAllText("Symbols.xaml"));
+        bool isRepeat;
+        bool isShuffle;
+        private string[] shuffleMusic;
+        
 
         public MainWindow()
         {
@@ -37,17 +44,11 @@ namespace MusicPlayerWPF
         {
             //media.Source = new Uri(@"C:\Users\Grumm\Desktop\links.mp3", UriKind.Relative);
 
-            timer = new System.Timers.Timer(500);
+            timer = new System.Timers.Timer(1000);
             timer.Elapsed += Timer_Elapsed;
             media.MediaEnded += Media_MediaEnded;
         }
-        private void Timer_Elapsed(object sender, ElapsedEventArgs e)
-        {
-            Dispatcher.Invoke(() =>
-            {
-                progres.Value += 500;
-            });
-        }
+        
 
         //Кнопки
         private void ButtonFolder_Click(object sender, RoutedEventArgs e) //Открытие директории
@@ -59,16 +60,22 @@ namespace MusicPlayerWPF
                     folder.RootFolder = Environment.SpecialFolder.Desktop;
                     textPath.Text = folder.SelectedPath;
 
-                    musics = Directory.GetFiles(folder.SelectedPath, "*.mp3", SearchOption.TopDirectoryOnly);
+                    music = Directory.GetFiles(folder.SelectedPath, "*.mp3", SearchOption.TopDirectoryOnly);
                 }
-                media.Source = new Uri(musics[count]);
+                media.Source = new Uri(music[count]);
+
+                FillDataGrid(music);
             }
         }
 
         private void ButtonPlayPause_Click(object sender, RoutedEventArgs e) //Кнопка воспроизведения
         {
             if (media.Source == null)
+            {
+                System.Windows.Forms.MessageBox.Show("Не указана папка с аудиозаписями");
                 return;
+            }
+
             if (state == States.StatesOfPlayer.Play)
             {
                 state = States.StatesOfPlayer.Pause;
@@ -123,11 +130,6 @@ namespace MusicPlayerWPF
             }
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-        }
-
-
         //Открытие медиа, перелистывание влево вправо
         private void OpenMedia(object sender)
         {
@@ -141,39 +143,96 @@ namespace MusicPlayerWPF
 
         private void MediaNext()
         {
-            if (!(count + 1 >= musics.Length))
-                media.Source = new Uri(musics[++count]);
+            if (isShuffle)
+            {
+                CheckCount(shuffleMusic, 'N');
+                return;
+            }
             else
             {
-                progres.Value = progres.Minimum;
-                state = States.StatesOfPlayer.Stop;
-                States.SetState(ref state, ref media, ref timer, ref buttonPlayPause);
-
+                CheckCount(music, 'N');
+                return;
             }
         }
 
         private void MediaPrevious()
         {
-            if (!(count - 1 < 0))
-                media.Source = new Uri(musics[--count]);
+            if (isShuffle)
+            {
+                CheckCount(shuffleMusic, 'P');
+                return;
+            }
+            else
+            {
+                CheckCount(music, 'P');
+                return;
+            }
         }
-        //
-        
+
+        private void CheckCount(in string[] arr, char previousNext)
+        {
+            if (previousNext == 'N')
+            {
+                if (!(count + 1 >= arr.Length))
+                    media.Source = new Uri(arr[++count]);
+                else
+                {
+                    progres.Value = progres.Minimum;
+                    state = States.StatesOfPlayer.Stop;
+                    States.SetState(ref state, ref media, ref timer, ref buttonPlayPause);
+
+                }
+            }
+            else if (previousNext == 'P')
+            {
+                if (!(count - 1 < 0))
+                    media.Source = new Uri(arr[--count]);
+                else
+                {
+                    media.Source = null;
+                    media.Source = new Uri(arr[count]);
+                    //progres.Value = progres.Minimum;
+                    //state = States.StatesOfPlayer.Stop;
+                    //States.SetState(ref state, ref media, ref timer, ref buttonPlayPause);
+
+                }
+            }
+        }
 
         private void Media_MediaOpened(object sender, RoutedEventArgs e)
         {
+            //songsDataGrid.UnselectAll();
+            songsDataGrid.SelectedIndex = count;
             song = new Song((sender as MediaElement).Source.LocalPath);
             progres.Value = progres.Minimum;
-            progres.Maximum = Convert.ToDouble(media.NaturalDuration.TimeSpan.TotalMilliseconds);
-            labelTitle.Content = song.GetTitleAndArtist();
-            //System.Windows.Forms.MessageBox.Show(song.GetTitleAndArtist());
+            progres.Maximum = Convert.ToDouble(media.NaturalDuration.TimeSpan.TotalSeconds);
+            songTitle.Text = song.GetSongName();
+            totalTime.Text = song.GetMinSec();
+            
         }
 
         private void Media_MediaEnded(object sender, RoutedEventArgs e)
         {
-            MediaNext();
+            if (isRepeat)
+            {
+                if (isShuffle)
+                {
+                    media.Source = null;
+                    media.Source = new Uri(shuffleMusic[count]);
+                }
+                else
+                {
+                    media.Source = null;
+                    media.Source = new Uri(music[count]);
+                }
+                
+            }
+            else
+            {
+                MediaNext();
+            }
+            
         }
-
 
         private void MediaVolume_ValueChanged_1(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
@@ -206,18 +265,28 @@ namespace MusicPlayerWPF
                 }
             }
         }
-        
+
+        private void Timer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                progres.Value += 1;
+            });
+        }
 
         private void Progres_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
+            currTime.Text = $"{media.Position.Minutes}:{media.Position.Seconds}";
+
             textPath.Text = progres.Value.ToString();
             if (Mouse.LeftButton == MouseButtonState.Pressed)
             {
+
                 Track track = progres.Template.FindName("PART_Track", progres) as Track;
                 if (track.IsMouseOver)
                 {
                     //System.Windows.Forms.MessageBox.Show("ValueChanged");
-                    media.Position = TimeSpan.FromMilliseconds(progres.Value);
+                    media.Position = TimeSpan.FromSeconds(progres.Value);
                 }
             }
         }
@@ -233,12 +302,86 @@ namespace MusicPlayerWPF
             //media.Position = TimeSpan.FromMilliseconds(progres.Value);
         }
 
-        private void Slider_DragCompleted(object sender, DragCompletedEventArgs e)
+        private void BtRepeating_Click(object sender, RoutedEventArgs e)
         {
-            //System.Windows.Forms.MessageBox.Show("DragCompleted");
+            
+            isRepeat = !isRepeat;
+            if (isRepeat)
+                btRepeating.Style = (Style)FindResource("RandAndShuffle");
+            else
+            {
+                btRepeating.Style = (Style)FindResource("ButtonStyle");
+            }
         }
 
-        
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            System.Windows.Forms.MessageBox.Show($"{Width}:{Height}");
+        }
+
+        private void songsDataGrid_PreviewMouseUp(object sender, MouseButtonEventArgs e)
+        {
+            int index = songsDataGrid.SelectedIndex;
+            count = index;
+            if (isShuffle)
+            {
+                media.Source = new Uri(shuffleMusic[index]);
+            }
+            else
+            {
+                media.Source = new Uri(music[index]);
+            }
+            state = States.StatesOfPlayer.Play;
+            States.SetState(ref state, ref media, ref timer, ref buttonPlayPause);
+        }
+
+        private void buttonRand_Click(object sender, RoutedEventArgs e)
+        {
+            isShuffle = !isShuffle;
+            if (isShuffle)
+            {
+                buttonRand.Style = (Style)FindResource("RandAndShuffle");
+                Shuffle();
+            }
+            else
+            {
+                buttonRand.Style = (Style)FindResource("ButtonStyle");
+                UnShuffle();
+            }
+        }
+
+        void FillDataGrid(in string[] arr)
+        {
+            List<SongModel> list = new List<SongModel>();
+            for (int i = 0; i < arr.Length; i++)
+            {
+                Song song = new Song(arr[i]);
+                //System.Windows.Forms.MessageBox.Show(el.NaturalDuration.TimeSpan.TotalSeconds.ToString());
+                list.Add(new SongModel()
+                {
+                    Title = song.GetSongName(),
+                    Album = song.album,
+                    Artist = song.artist,
+                    Duration = song.GetMinSec()
+                });
+            }
+            songsDataGrid.ItemsSource = list;
+        }
+
+        void Shuffle()
+        {
+            Random random = new Random();
+            count = 0;
+            shuffleMusic = music.OrderBy(x => random.Next()).ToArray();
+            media.Source = new Uri(shuffleMusic[0]);
+            FillDataGrid(shuffleMusic);
+        }
+        void UnShuffle()
+        {
+            count = 0;
+            media.Source = new Uri(music[0]);
+            FillDataGrid(music);
+        }
     }
 }
 

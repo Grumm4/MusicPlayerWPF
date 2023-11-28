@@ -10,6 +10,6 @@
     <sys:String x:Key="VolumeOne">🔈</sys:String>
     <sys:String x:Key="VolumeTwo">🔉</sys:String>
     <sys:String x:Key="VolumeMax">🔊</sys:String>
-    <sys:String x:Key="Res">🔂</sys:String>
+    <sys:String x:Key="Repeat">🔂</sys:String>
 
 </ResourceDictionary>

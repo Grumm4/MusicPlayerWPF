@@ -5,6 +5,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
 
 namespace MusicPlayerWPF
 {
@@ -12,27 +14,44 @@ namespace MusicPlayerWPF
     {
         //public int Id { get; set; }
 
-        private readonly string name;
+        private readonly string _name;
 
-        private readonly string artist;
+        public string artist = "Unknown Artist";
 
-        private readonly string title;
+        public string album = "Unknown Album";
 
-        private readonly string path;
+        private readonly string _path;
 
+        private readonly TimeSpan _totalduration;
+
+        private int minutes;
+        
+        private int seconds;
+
+        
         public Song(string path)
         {
+
             try
             {
-                this.path = path;
-                name = Path.GetFileName(this.path).Split('.')[0];
+                this._path = path;
+                _name = Path.GetFileName(this._path).Split('.')[0];
 
                 using (var audioFile = new AudioFileReader(path))
                 {
                     var tagFile = TagLib.File.Create(path);
-                    artist = tagFile.Tag.FirstPerformer;
-                    title = tagFile.Tag.Title;
+                    if (!string.IsNullOrEmpty(tagFile.Tag.FirstPerformer))
+                    {
+                        artist = tagFile.Tag.FirstPerformer;
+                    }
+                    if (!string.IsNullOrEmpty(tagFile.Tag.Album))
+                    {
+                        album = tagFile.Tag.Album;
+                    }
+                    minutes = tagFile.Properties.Duration.Minutes;
+                    seconds = tagFile.Properties.Duration.Seconds;
                 }
+                //ParseSongDuration(out minutes, out seconds, _totalduration);
             }
             catch (Exception ex)
             {
@@ -40,20 +59,40 @@ namespace MusicPlayerWPF
             }
         }
 
-        public string GetTitleAndArtist()
+        private void ParseSongDuration(out int min, out int sec, TimeSpan totalduration)
         {
-            try
-            {
-                if (!string.IsNullOrEmpty(title) & !string.IsNullOrEmpty(artist))
-                    return $"{artist} -- {title}";
-                else
-                    return name;
-            }
-            catch (Exception ex)
-            {
-                System.Windows.Forms.MessageBox.Show(ex.Message, "Error", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
-                return "";
-            }
+            sec = totalduration.Seconds;
+            min = totalduration.Minutes;
+        }
+
+        //public string GetTitle()
+        //{
+        //    try
+        //    {
+        //        if (!string.IsNullOrEmpty(album) & !string.IsNullOrEmpty(artist))
+        //            return $"{artist} -- {album}";
+        //        else
+        //        {
+        //            artist = "Unknown Artist";
+        //            album = "Unknown Album";
+        //            return _name;
+        //        }    
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        System.Windows.Forms.MessageBox.Show(ex.Message, "Error", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
+        //        return "";
+        //    }
+        //}
+
+        public string GetSongName()
+        {
+            return _name;
+        }
+
+        public string GetMinSec() 
+        {
+            return $"{minutes}:{seconds}";
         }
     }
 }

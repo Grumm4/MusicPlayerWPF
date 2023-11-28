@@ -3,11 +3,13 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:MusicPlayerWPF"
              StartupUri="MainWindow.xaml">
+
     <Application.Resources>
-        <Style TargetType="Button">
+
+        <Style x:Key="ButtonStyle" TargetType="Button">
             <Setter Property="OverridesDefaultStyle" Value="True"/>
-            <Setter Property="Background" Value="LightBlue"/>
-            <Setter Property="Foreground" Value="Black"/>
+            <Setter Property="Background" Value="Black"/>
+            <Setter Property="Foreground" Value="White"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
@@ -15,20 +17,18 @@
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                         <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Foreground" Value="Gray" />
-                            </Trigger>
+                            
                             <EventTrigger RoutedEvent="PreviewMouseDown">
                                 <BeginStoryboard>
                                     <Storyboard>
-                                        <ColorAnimation To="DarkGray" Duration="0:0:0.1" Storyboard.TargetProperty="Foreground.Color" />
+                                        <ColorAnimation To="Gray" Duration="0:0:0.1" Storyboard.TargetProperty="Foreground.Color" />
                                     </Storyboard>
                                 </BeginStoryboard>
                             </EventTrigger>
                             <EventTrigger RoutedEvent="PreviewMouseUp">
                                 <BeginStoryboard>
                                     <Storyboard>
-                                        <ColorAnimation To="Gray" Duration="0:0:0.1" Storyboard.TargetProperty="Foreground.Color" />
+                                        <ColorAnimation To="White" Duration="0:0:0.1" Storyboard.TargetProperty="Foreground.Color" />
                                     </Storyboard>
                                 </BeginStoryboard>
                             </EventTrigger>
@@ -38,7 +38,66 @@
             </Setter>
         </Style>
 
+        <Style x:Key="RandAndShuffle" TargetType="Button">
+            <Setter Property="OverridesDefaultStyle" Value="True"/>
+            <Setter Property="Background" Value="Black"/>
+            <Setter Property="Foreground" Value="DimGray"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Name="Border" BorderThickness="0" BorderBrush="Black" Background="{TemplateBinding Background}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
 
+                            <EventTrigger RoutedEvent="PreviewMouseDown">
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <ColorAnimation To="Gray" Duration="0:0:0.1" Storyboard.TargetProperty="Foreground.Color" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+                            <EventTrigger RoutedEvent="PreviewMouseUp">
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <ColorAnimation To="White" Duration="0:0:0.1" Storyboard.TargetProperty="Foreground.Color" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="HeaderStyle" TargetType="DataGridColumnHeader">
+            <Setter Property="Background" Value="Black"/>
+            
+        </Style>
+
+        <Style x:Key="RowStyle" TargetType="DataGridRow">
+            <Setter Property="Background" Value="Black"/>
+
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="Gray" />
+                </Trigger>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="White"/>
+                    <Setter Property="Foreground" Value="Black"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="CellStyle" TargetType="DataGridCell">
+            <Setter Property="BorderThickness" Value="0"/>
+        </Style>
+        
+        <Style x:Key="RowHeaderStyle" TargetType="DataGridRowHeader">
+            <Setter Property="Background" Value="Black"/>
+            
+        </Style>
+            
         <SolidColorBrush x:Key="SliderThumb.Static.Foreground" Color="#FFE5E5E5"/>
         <SolidColorBrush x:Key="SliderThumb.MouseOver.Background" Color="#FFDCECFC"/>
         <SolidColorBrush x:Key="SliderThumb.MouseOver.Border" Color="#FF7Eb4EA"/>
@@ -46,7 +105,7 @@
         <SolidColorBrush x:Key="SliderThumb.Pressed.Border" Color="#FF569DE5"/>
         <SolidColorBrush x:Key="SliderThumb.Disabled.Background" Color="#FFF0F0F0"/>
         <SolidColorBrush x:Key="SliderThumb.Disabled.Border" Color="#FFD9D9D9"/>
-        <SolidColorBrush x:Key="SliderThumb.Static.Background" Color="#FFF0F0F0"/>
+        <SolidColorBrush x:Key="SliderThumb.Static.Background" Color="Black"/>
         <SolidColorBrush x:Key="SliderThumb.Static.Border" Color="#FFACACAC"/>
         <ControlTemplate x:Key="SliderThumbHorizontalTop" TargetType="{x:Type Thumb}">
             <Grid HorizontalAlignment="Center" UseLayoutRounding="True" VerticalAlignment="Center">
@@ -148,7 +207,8 @@
                                VerticalAlignment="Center" >
                                 <Thumb.Template>
                                     <ControlTemplate TargetType="Thumb">
-                                        <Border Background="LightBlue" BorderBrush="#FFF" BorderThickness="1" CornerRadius="10"/>
+                                        <Border Background="#FFF" BorderBrush="Black" BorderThickness="2" CornerRadius="10"/>
+                                        
                                     </ControlTemplate>
                                 </Thumb.Template>
                             </Thumb>
@@ -300,5 +360,8 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
+
+
+
     </Application.Resources>
 </Application>
