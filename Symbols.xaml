@@ -1,15 +1,16 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
-    <sys:String x:Key="Play">▶</sys:String>
-    <sys:String x:Key="Pause">⏸</sys:String>
-    <sys:String x:Key="Left">⏮</sys:String>
-    <sys:String x:Key="Right">⏭</sys:String>
-    <sys:String x:Key="Rand">🔀</sys:String>
+    <BitmapImage x:Key="Play" UriSource="\Images\play.png"/>
+    <BitmapImage x:Key="Pause" UriSource="\Images\pause.png"/>
+    <BitmapImage x:Key="Left" UriSource="\Images\left.png"/>
+    <BitmapImage x:Key="Right" UriSource="\Images\right.png"/>
+    <BitmapImage x:Key="Rand" UriSource="\Images\rand.png"/>
+    <BitmapImage x:Key="Repeat" UriSource="\Images\repeat.png"/>
+
     <sys:String x:Key="VolumeMin">🔇</sys:String>
     <sys:String x:Key="VolumeOne">🔈</sys:String>
     <sys:String x:Key="VolumeTwo">🔉</sys:String>
     <sys:String x:Key="VolumeMax">🔊</sys:String>
-    <sys:String x:Key="Repeat">🔂</sys:String>
 
 </ResourceDictionary>

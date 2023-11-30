@@ -22,6 +22,7 @@ using System.Linq;
 
 namespace MusicPlayerWPF
 {
+    
     public partial class MainWindow : Window
     {
         private States.StatesOfPlayer state;
@@ -33,7 +34,6 @@ namespace MusicPlayerWPF
         bool isRepeat;
         bool isShuffle;
         private string[] shuffleMusic;
-        
 
         public MainWindow()
         {
@@ -42,13 +42,10 @@ namespace MusicPlayerWPF
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            //media.Source = new Uri(@"C:\Users\Grumm\Desktop\links.mp3", UriKind.Relative);
-
             timer = new System.Timers.Timer(1000);
             timer.Elapsed += Timer_Elapsed;
             media.MediaEnded += Media_MediaEnded;
         }
-        
 
         //Кнопки
         private void ButtonFolder_Click(object sender, RoutedEventArgs e) //Открытие директории
@@ -60,7 +57,8 @@ namespace MusicPlayerWPF
                     folder.RootFolder = Environment.SpecialFolder.Desktop;
                     textPath.Text = folder.SelectedPath;
 
-                    music = Directory.GetFiles(folder.SelectedPath, "*.mp3", SearchOption.TopDirectoryOnly);
+                    //music = Directory.GetFiles(folder.SelectedPath, "*.waw", SearchOption.TopDirectoryOnly);
+                    music = Directory.EnumerateFiles(folder.SelectedPath, "*.*", SearchOption.TopDirectoryOnly).Where(s => s.EndsWith(".mp3") || s.EndsWith(".wav")).ToArray();
                 }
                 media.Source = new Uri(music[count]);
 
@@ -79,12 +77,12 @@ namespace MusicPlayerWPF
             if (state == States.StatesOfPlayer.Play)
             {
                 state = States.StatesOfPlayer.Pause;
-                States.SetState(ref state, ref media, ref timer, ref buttonPlayPause);
+                States.SetState(ref state, ref media, ref timer, ref ppImage);
             }
             else
             {
                 state = States.StatesOfPlayer.Play;
-                States.SetState(ref state, ref media, ref timer, ref buttonPlayPause);
+                States.SetState(ref state, ref media, ref timer, ref ppImage);
             }
         }
 
@@ -179,7 +177,7 @@ namespace MusicPlayerWPF
                 {
                     progres.Value = progres.Minimum;
                     state = States.StatesOfPlayer.Stop;
-                    States.SetState(ref state, ref media, ref timer, ref buttonPlayPause);
+                    States.SetState(ref state, ref media, ref timer, ref ppImage);
 
                 }
             }
@@ -332,7 +330,7 @@ namespace MusicPlayerWPF
                 media.Source = new Uri(music[index]);
             }
             state = States.StatesOfPlayer.Play;
-            States.SetState(ref state, ref media, ref timer, ref buttonPlayPause);
+            States.SetState(ref state, ref media, ref timer, ref ppImage);
         }
 
         private void buttonRand_Click(object sender, RoutedEventArgs e)
@@ -376,6 +374,7 @@ namespace MusicPlayerWPF
             media.Source = new Uri(shuffleMusic[0]);
             FillDataGrid(shuffleMusic);
         }
+
         void UnShuffle()
         {
             count = 0;
@@ -396,7 +395,7 @@ struct States
         Stop
     }
 
-    public static void SetState(ref StatesOfPlayer s, ref MediaElement el, ref System.Timers.Timer t, ref System.Windows.Controls.Button PlayPause)
+    public static void SetState(ref StatesOfPlayer s, ref MediaElement el, ref System.Timers.Timer t, ref Image PlayPause)
     {
         
         //MainWindow window = new MainWindow();
@@ -405,18 +404,18 @@ struct States
             case StatesOfPlayer.Play:
                 el.Play();
                 t.Start();
-                PlayPause.Content = (string)MainWindow.resDictionary["Pause"];
+                PlayPause.Source = (BitmapImage)MainWindow.resDictionary["Pause"];
                 break;
             case StatesOfPlayer.Close: el.Close(); break;
             case StatesOfPlayer.Pause: 
                 el.Pause();
                 t.Stop();
-                PlayPause.Content = (string)MainWindow.resDictionary["Play"];
+                PlayPause.Source = (BitmapImage)MainWindow.resDictionary["Play"];
                 break;
             case StatesOfPlayer.Stop:
                 el.Stop();
                 t.Stop();
-                PlayPause.Content = (string)MainWindow.resDictionary["Play"];
+                PlayPause.Source = (BitmapImage)MainWindow.resDictionary["Play"];
                 break;
         }
     }

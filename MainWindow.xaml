@@ -24,12 +24,12 @@
 
         <Button Name="buttonFolder"
                 Content="Выбрать папку"
-                Margin="590,0,0,0" 
+                Margin="590,1,10,0" 
                 FontSize="25" Style="{StaticResource ButtonStyle}"
                 HorizontalContentAlignment="Center" 
                 Click="ButtonFolder_Click" 
                 Height="Auto" Width="Auto" 
-                MinHeight="50" MinWidth="200"
+                MinHeight="25" MinWidth="100"
                 VerticalAlignment="Top" HorizontalAlignment="Right"/>
 
         <MediaElement LoadedBehavior="Manual" x:Name="media" 
@@ -37,103 +37,130 @@
                       MediaOpened="Media_MediaOpened"
                       />
 
-
-        <Button Margin="300,10,300,344" Width="199" Height="30" Click="Button_Click"/>
-
-        <Grid x:Name="footter" Margin="0,296,0,0" VerticalAlignment="Bottom" Width="Auto" Height="Auto" Background="Black">
+        <Grid x:Name="footter" Margin="0,296,0,0" VerticalAlignment="Bottom"  Background="Transparent" >
             <Grid.RowDefinitions>
                 <RowDefinition Height="43*"/>
                 <RowDefinition Height="20*"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="100*"/>
-                <ColumnDefinition Width="200*"/>
-                <ColumnDefinition Width="100*"/>
+                <ColumnDefinition Width="283*"/>
+                <ColumnDefinition Width="283*"/>
+                <ColumnDefinition Width="36*"/>
+                <ColumnDefinition Width="248*"/>
             </Grid.ColumnDefinitions>
+
+            <Grid Grid.Row="0" Grid.ColumnSpan="3" Margin="283,0,35,0" HorizontalAlignment="Center">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition MaxWidth="50"/>
+                    <ColumnDefinition MaxWidth="50"/>
+                    <ColumnDefinition MaxWidth="50"/>
+                    <ColumnDefinition MaxWidth="50"/>
+                    <ColumnDefinition MaxWidth="50"/>
+                </Grid.ColumnDefinitions>
+                <Button x:Name="buttonLeft" 
+                        Margin="5"
+                        Grid.Column="0"
+                        Click="ButtonLeft_Click" 
+                        Width="Auto" FontSize="30" VerticalAlignment="Bottom" 
+                        MaxHeight="40" MaxWidth="60" 
+                        Style="{StaticResource ButtonStyle}">
+                    <Image Source="{StaticResource Left}"/>
+                </Button>
+
+                <Button x:Name="buttonPlayPause" 
+                        Margin="5"
+                        Grid.Column="1"
+                        Click="ButtonPlayPause_Click" 
+                        FontSize="30" Width="Auto" 
+                        MaxHeight="40" MaxWidth="60" 
+                        Style="{StaticResource ButtonStyle}" VerticalAlignment="Bottom">
+                    <Image x:Name="ppImage" Source="{StaticResource Play}"/>
+                </Button>
+
+                <Button x:Name="buttonRight" 
+                        Grid.Column="2"
+                        Margin="5"
+                        Click="ButtonRight_Click"
+                        FontSize="30" Width="Auto" 
+                        MaxHeight="40" MaxWidth="60" 
+                        VerticalAlignment="Bottom"
+                        Style="{StaticResource ButtonStyle}">
+                    <Image Source="{StaticResource Right}"/>
+                </Button>
+
+                <Button x:Name="buttonRand" Grid.Column="3"
+                        Margin="5"
+                        Style="{StaticResource ButtonStyle}" Click="buttonRand_Click"
+                        FontSize="30" Width="Auto" 
+                        MaxHeight="40" MaxWidth="60"
+                        VerticalAlignment="Bottom">
+                    <Image Source="{StaticResource Rand}"/>
+                </Button>
+
+                <Button x:Name="btRepeating" 
+                        Grid.Column="4"
+                        Margin="5"
+                        Click="BtRepeating_Click" Style="{StaticResource ButtonStyle}"
+                        FontSize="30" Width="Auto" 
+                        MaxHeight="40" MaxWidth="60" 
+                        VerticalAlignment="Bottom">
+                    <Image Source="{StaticResource Repeat}"/>
+                </Button>
+            </Grid>
+
 
             <TextBlock x:Name="songTitle" FontSize="13"
                    Margin="10,8,10,7"
                    MinHeight="20" MinWidth="100"
                    Height="30" Width="Auto"
-                   Foreground="White" Background="Black" 
+                   Foreground="White" Background="Transparent" 
                    TextBlock.TextTrimming="CharacterEllipsis"/>
 
 
             <Slider x:Name="mediaVolume"
-                    VerticalAlignment="Top"  
-                    MinWidth="50" MinHeight="18"
-                    Height="18" Width="Auto"
-                    Margin="30,21,20,0"
+                    VerticalAlignment="Top"
+                    MinWidth="200" MinHeight="18"
+                    HorizontalAlignment="Stretch"
                     Minimum="0" Maximum="1" Value="1" 
                     ValueChanged="MediaVolume_ValueChanged_1" 
-                    IsMoveToPointEnabled="True" Grid.Column="2" Grid.RowSpan="2"/>
+                    IsMoveToPointEnabled="True" Grid.Column="3"
+                    Style="{DynamicResource SliderStyle1}" Margin="6,25,0,0"
+                    />
             <Button x:Name="btImageVolume"
                     Click="Bt_VolumeImage_Click" 
-                    Width="27" Height="26" 
-                    FontSize="20"
-                    VerticalAlignment="Top" HorizontalAlignment="Left"
+                    FontSize="20" HorizontalAlignment="Right"
+                    VerticalAlignment="Top" 
                     HorizontalContentAlignment="Center"  Style="{StaticResource ButtonStyle}"
-                    Content="{StaticResource VolumeMax}" Grid.Column="2" Margin="0,17,0,0" Grid.RowSpan="2"/>
-            <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-                <Button x:Name="buttonLeft" 
-                    Content="{StaticResource Left}"
-                    Click="ButtonLeft_Click" 
-                    Width="Auto" Height="Auto"
-                    FontSize="20" MinWidth="27" MinHeight="27"
-                    Margin="5" Style="{StaticResource ButtonStyle}"
-                    />
-                <Button x:Name="buttonPlayPause" 
-                    Content="{StaticResource Play}" 
-                    Click="ButtonPlayPause_Click" 
-                    FontSize="20" Width="Auto" Height="Auto"
-                    Margin="5" Style="{StaticResource ButtonStyle}"
-                    />
-                <Button x:Name="buttonRight" 
-                    Content="{StaticResource Right}" 
-                    FontSize="20" Width="Auto" Height="Auto"
-                    Click="ButtonRight_Click"
-                    Margin="5" Style="{StaticResource ButtonStyle}"
-                    />
-                <Button x:Name="buttonRand" 
-                    Content="{StaticResource Rand}" 
-                    Width="Auto" Height="Auto"
-                    FontSize="20" MinWidth="27" MinHeight="27" 
-                    Margin="5" Style="{StaticResource ButtonStyle}" Click="buttonRand_Click"
-                    />
-                <Button x:Name="btRepeating" Content="{StaticResource Repeat}" 
-                    FontSize="20" Width="Auto" Height="Auto"
-                    Margin="5" Click="BtRepeating_Click" Style="{StaticResource ButtonStyle}"/>
-            </StackPanel>
-            <Slider x:Name="progres" Margin="50,0,50,0"
+                    Content="{StaticResource VolumeMax}" Grid.Column="2" Grid.RowSpan="2" Margin="0,20,0,0"/>
+
+            <Slider x:Name="progres"
                     Minimum="0" Maximum="10" Value="0" 
-                    MinWidth="250" MinHeight="20"
-                    Width="Auto" Height="20"
-                    IsMoveToPointEnabled="True" 
-                    VerticalAlignment="Center"
+                    MinWidth="100" MinHeight="20"
+                    Width="Auto" Height="23"
+                    IsMoveToPointEnabled="True"
                     Thumb.DragCompleted="Progres_DragCompleted" Thumb.DragStarted="progres_DragStarted"
                     ValueChanged="Progres_ValueChanged"
-                    Style="{DynamicResource SliderStyle1}" Grid.Column="1" Grid.Row="1"/>
+                    Style="{DynamicResource SliderStyle1}" Grid.Row="1" Grid.ColumnSpan="2" Margin="0,0,35,0" Grid.Column="1"/>
             <TextBlock x:Name="totalTime" Height="23" Width="Auto"
-                       Grid.Column="1" Margin="0,42,18,0" Grid.RowSpan="2"
-                       HorizontalAlignment="Right" VerticalAlignment="Bottom"
-                       Foreground="White" Background="Black"/>
+                       Grid.Column="2" Margin="6,0,0,0"
+                       HorizontalAlignment="Left" VerticalAlignment="Center"
+                       Foreground="White" Background="Black" Grid.Row="1"/>
 
-            <TextBlock x:Name="currTime" Height="23" Width="Auto" 
-                       Grid.Column="1" Margin="10,42,378,0" Grid.RowSpan="2"
+            <TextBlock x:Name="currTime" Height="Auto" Width="Auto" 
+                       Grid.Column="1" 
                        VerticalAlignment="Bottom" HorizontalAlignment="Left"
-                       Foreground="White" Background="Black"/>
+                       Foreground="White" Background="Black" Grid.Row="1"/>
         </Grid>
         <DataGrid x:Name="songsDataGrid" 
-                  Margin="0,50,0,65" 
-                  BorderThickness="0" Background="Black" BorderBrush="Black" 
-                  GridLinesVisibility="Horizontal" AutoGenerateColumns="False" MinWidth="800" Height="Auto"  
-                  
-                  CanUserResizeColumns="False" CanUserReorderColumns="False" HorizontalAlignment="Center"
+                  Margin="0,50,0,85" 
+                  BorderThickness="0" Background="Transparent" BorderBrush="Transparent" 
+                  GridLinesVisibility="Horizontal" AutoGenerateColumns="False" MinWidth="800" MinHeight="200" Width="Auto" Height="Auto"
+                  CanUserResizeColumns="False" CanUserReorderColumns="False" 
                   CanUserSortColumns="False" HeadersVisibility="None" SelectionMode="Single" CanUserAddRows="False" 
                   CanUserDeleteRows="False" CanUserResizeRows="False" IsReadOnly="True" SelectionUnit="FullRow" 
-                  ColumnWidth="*" PreviewMouseUp="songsDataGrid_PreviewMouseUp">
-            
-            
+                  ColumnWidth="*" PreviewMouseUp="songsDataGrid_PreviewMouseUp" HorizontalScrollBarVisibility="Disabled">
+
+
             <DataGrid.CellStyle>
                 <Style TargetType="DataGridCell">
                     <Setter Property="Background" Value="Black"/>
